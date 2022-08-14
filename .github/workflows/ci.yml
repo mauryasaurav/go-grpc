@@ -43,4 +43,4 @@ jobs:
       run: |
         git remote add heroku https://heroku:6b94490e-6368-4dd3-b767-227d00cdb5c0@git.heroku.com/go-grpc-crud-api.git
         [[ ! -s \"$(git rev-parse --git-dir)/shallow\" ]] || git fetch --unshallow
-        git push heroku main
+        git push heroku main -f
