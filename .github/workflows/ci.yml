@@ -1,0 +1,46 @@
+name: ci-test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: testing123
+          POSTGRES_USER: postgres
+          POSTGRES_DB: go-grpc
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.18
+    - name: Test
+      run: |
+         cd server/ 
+         go test -v ./...
+
+         cd ../client/
+         go test -v ./...
+
+    - name: Deploy to Heroku
+      if: github.ref == 'refs/heads/main' && job.status == 'success'
+      run: |
+        git remote add heroku https://heroku:6b94490e-6368-4dd3-b767-227d00cdb5c0@git.heroku.com/go-grpc-crud-api.git
+        [[ ! -s \"$(git rev-parse --git-dir)/shallow\" ]] || git fetch --unshallow
+        git push heroku main

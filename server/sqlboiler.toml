@@ -1,0 +1,12 @@
+output   = "./repository"
+wipe     = true
+no-tests = true
+
+[psql]
+  user = "postgres"
+  dbname = "go-grpc"
+  host   = "localhost"
+  port   = 5432
+  pass   = "testing123"
+  sslmode = "disable"
+  blacklist = ["schema_migrations"]
